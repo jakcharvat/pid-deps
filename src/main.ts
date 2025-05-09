@@ -1,6 +1,29 @@
+import { Command } from "commander";
 import { departuresSchema, type Departure } from "./deps";
 import { table } from "./table";
 import { vehiclesSchema } from "./vehicles";
+
+const parseNum =
+  (option: string) =>
+  (x: string): number => {
+    const val = parseInt(x);
+    if (!Number.isNaN(val)) return val;
+    throw new Error(`'${x}' is not a valid argument for integer option ${option}`);
+  };
+
+const cli = new Command()
+  .name("deps")
+  .description("Display upcoming departures from a PID stop.")
+  .version("0.1.0")
+  .option("-n, --count <count>", "Maximum number of departures to fetch", parseNum("--count"), 6)
+  .option(
+    "-l, --lines <numbers...>",
+    "Filter by line number(s)",
+    (value, previous) => [...(previous || []), parseNum("--lines")(value)],
+    [] as number[],
+  );
+
+const opts = cli.parse().opts();
 
 const STOP_ID = "U12Z3P";
 
@@ -28,8 +51,17 @@ assert(
 
 const numberToVehicle = Object.fromEntries(activeDppVehicles.map((v) => [v.number, v]));
 
-const depsQuery = encodeURIComponent(JSON.stringify({ "0": [STOP_ID] }));
-const depsUrl = `https://api.golemio.cz/v2/public/departureboards?stopIds=${depsQuery}`;
+const depsQueryParams: [string, any][] = [
+  ["stopIds", JSON.stringify({ "0": [STOP_ID] })],
+  ["limit", opts.count],
+  ...opts.lines.map((l: number) => ["routeShortNames", l]),
+];
+
+const encodedDeps = depsQueryParams
+  .map((x) => x.map(String).map(encodeURIComponent).join("="))
+  .join("&");
+
+const depsUrl = `https://api.golemio.cz/v2/public/departureboards?${encodedDeps}`;
 const depsHeaders = {
   accept: "application/json",
   "X-Access-Token": GOLEMIO_API_KEY,
