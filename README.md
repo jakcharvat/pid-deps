@@ -1,15 +1,25 @@
-# deps
+# PID Departures CLI
 
-To install dependencies:
+A command-line tool that displays real-time public transit departures with vehicle details, built with TypeScript and Bun.
 
+## Setup
+
+1. Install dependencies:
 ```bash
 bun install
 ```
 
-To run:
-
+2. Set environment variable:
 ```bash
-bun run deps.ts
+export GOLEMIO_API_KEY="your-api-key"
 ```
 
-This project was created using `bun init` in bun v1.1.29. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Usage
+
+```bash
+bun run src/main.ts
+```
+
+## Dependencies
+
+- `zod`: Runtime type checking and validation
