@@ -51,8 +51,9 @@ const vehicle = (d: Departure) => {
   return `${id} ${v.type}`;
 };
 
-const toHhMm = (isoString: string): string => {
-  const date = new Date(isoString);
+const depIn = (d: Departure) => (d.departure.minutes === 0 ? "<1" : d.departure.minutes);
+const depAt = (d: Departure): string => {
+  const date = new Date(d.departure.timestamp_predicted);
   return date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
@@ -64,7 +65,7 @@ console.log(
   table(deps.flat(), [
     {
       header: "Departure",
-      subcolumns: [(d) => d.departure.minutes, (d) => toHhMm(d.departure.timestamp_predicted)],
+      subcolumns: [depIn, depAt],
     },
     {
       header: "Vehicle",
