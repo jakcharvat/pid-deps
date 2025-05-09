@@ -1,0 +1,9 @@
+// Static tasks configuration.
+//
+// Example:
+[
+  {
+    "label": "run deps",
+    "command": "bun run src/main.ts"
+  }
+]
