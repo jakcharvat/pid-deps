@@ -11,7 +11,7 @@ function assert(condition: boolean, message: string = "Assertion failed"): asser
 }
 
 const GOLEMIO_API_KEY = Bun.env["GOLEMIO_API_KEY"];
-assert(GOLEMIO_API_KEY !== undefined);
+assert(GOLEMIO_API_KEY !== undefined, "GOLEMIO_API_KEY environment variable is not defined");
 
 const vehiclesRes = await fetch("https://seznam-autobusu.cz/api/ropid/pid");
 const vehicles = vehiclesSchema.parse(await vehiclesRes.json());
